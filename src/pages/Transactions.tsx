@@ -16,14 +16,33 @@ export default function Transactions() {
   const [loading, setLoading]           = useState(true);
   const [isFormOpen, setIsFormOpen]     = useState(false);
   const [formData, setFormData] = useState({ type: 'expense', amount: '', category_id: '', date: format(new Date(), 'yyyy-MM-dd'), description: '' });
-  const [search, setSearch]         = useState('');
-  const [filterType, setFilterType] = useState('all');
+  
+  // Поля для фільтрації та сортування
+  const [search, setSearch]             = useState('');
+  const [filterType, setFilterType]     = useState('all');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [startDate, setStartDate]       = useState('');
+  const [endDate, setEndDate]           = useState('');
+  const [sortBy, setSortBy]             = useState('date');
+  const [sortOrder, setSortOrder]       = useState('DESC');
+
   const dateLocale = language === 'uk' ? uk : enUS;
 
   const fetchData = async () => {
     try {
+      // Побудова query-параметрів відповідно до логіки вашого маршруту API
+      const queryParams = new URLSearchParams({
+        search: search,
+        type: filterType === 'all' ? '' : filterType,
+        category_id: filterCategory,
+        start_date: startDate,
+        end_date: endDate,
+        sort_by: sortBy,
+        sort_order: sortOrder
+      });
+
       const [txRes, catRes] = await Promise.all([
-        fetch(`/api/transactions?search=${search}&type=${filterType === 'all' ? '' : filterType}`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`/api/transactions?${queryParams.toString()}`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch('/api/categories', { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       if (txRes.ok && catRes.ok) {
@@ -34,7 +53,10 @@ export default function Transactions() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchData(); }, [search, filterType, token]);
+  // Перезапуск запиту при зміні будь-якого фільтра або параметру сортування
+  useEffect(() => { 
+    fetchData(); 
+  }, [search, filterType, filterCategory, startDate, endDate, sortBy, sortOrder, token]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -101,13 +123,66 @@ export default function Transactions() {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'space-between', marginBottom: '1rem' }}>
-        <input type="text" placeholder={t('transactions.search_desc')} value={search} onChange={e => setSearch(e.target.value)} style={{ ...inp, maxWidth: '28rem', paddingLeft: '0.25rem' }} />
-        <select value={filterType} onChange={e => setFilterType(e.target.value)} style={{ ...inp, width: 'auto', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.7 }}>
-          <option value="all">{t('transactions.all_records')}</option>
-          <option value="income">{t('transactions.inc_only')}</option>
-          <option value="expense">{t('transactions.exp_only')}</option>
-        </select>
+      {/* Панель розширеної фільтрації та сортування */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', border: '1px solid var(--border)', padding: '1rem', background: '#f9fafb' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Пошук */}
+          <div style={{ flex: '1 1 14rem' }}>
+            <label style={lbl}>{t('transactions.search_desc') || 'Пошук за описом'}</label>
+            <input type="text" placeholder="..." value={search} onChange={e => setSearch(e.target.value)} style={inp} />
+          </div>
+
+          {/* Тип операції */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Тип</label>
+            <select value={filterType} onChange={e => setFilterType(e.target.value)} style={inp}>
+              <option value="all">{t('transactions.all_records')}</option>
+              <option value="income">{t('transactions.inc_only')}</option>
+              <option value="expense">{t('transactions.exp_only')}</option>
+            </select>
+          </div>
+
+          {/* Категорія */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Категорія</label>
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={inp}>
+              <option value="">Всі категорії</option>
+              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Дата з */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Дата з</label>
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} style={inp} />
+          </div>
+
+          {/* Дата по */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Дата по</label>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} style={inp} />
+          </div>
+
+          {/* Сортування за */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Сортувати за</label>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={inp}>
+              <option value="date">Датою</option>
+              <option value="amount">Сумою</option>
+            </select>
+          </div>
+
+          {/* Напрямок сортування */}
+          <div style={{ flex: '1 1 10rem' }}>
+            <label style={lbl}>Порядок</label>
+            <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={inp}>
+              <option value="DESC">За спаданням</option>
+              <option value="ASC">За зростанням</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>

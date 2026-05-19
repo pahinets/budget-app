@@ -68,6 +68,12 @@ export default function Login() {
           <div>
             <label style={{ display: 'block', fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.9, color: '#374151', marginBottom: '0.5rem' }}>{t('auth.passphrase')}</label>
             <input type="password" required value={password} onChange={e => setPassword(e.target.value)} style={inp} placeholder={t('auth.passphrase_placeholder')} />
+            
+            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+              <Link to="/forgot-password" style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '0.75rem', opacity: 0.7, color: 'var(--ink)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                Забули пароль?
+              </Link>
+            </div>
           </div>
 
           <button type="submit" disabled={loading} style={{ padding: '1rem', background: 'var(--ink)', color: 'white', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: loading ? 0.5 : 1 }}>

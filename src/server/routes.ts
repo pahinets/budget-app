@@ -98,6 +98,54 @@ export function registerRoutes(app: Express): void {
     }
   });
 
+app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) return res.status(400).json({ error: "Email обов'язковий" });
+
+      const user = await prisma.user.findUnique({ where: { email } });
+      
+      if (user) {
+        // Використовуємо функцію generateToken, яка вже є у вашому auth.ts
+        // Для безпеки зазвичай ставлять менший термін дії, але для тесту підійде стандартний
+        const resetToken = generateToken(user); 
+        
+        // Тут логіка відправки листа. Поки що виводимо в консоль сервера:
+        console.log(`[RESET LINK] /reset-password?token=${resetToken}`);
+      }
+
+      res.json({ message: "Якщо email є в системі, інструкції надіслано." });
+    } catch (e) {
+      res.status(500).json({ error: 'Помилка сервера' });
+    }
+  });
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      if (!token || !newPassword) return res.status(400).json({ error: "Дані обов'язкові" });
+
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { id: number };
+
+      if (!decoded || !decoded.id) {
+        return res.status(400).json({ error: 'Недійсний або прострочений токен' });
+      }
+
+      const bcrypt = require('bcrypt');
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+
+      await prisma.user.update({
+        where: { id: decoded.id },
+        data: { passwordHash },
+      });
+
+      res.json({ success: true, message: 'Пароль успішно змінено' });
+    } catch (e) {
+      res.status(400).json({ error: 'Токен недійсний або його термін дії закінчився' });
+    }
+  });
+
   app.get('/api/auth/me', authMiddleware, async (req: AuthRequest, res: Response) => {
     try {
       const user = await prisma.user.findUnique({
