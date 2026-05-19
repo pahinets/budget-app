@@ -196,15 +196,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                 </button>
               </div>
             </nav>
-            <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--border)', marginTop: '2rem' }}>
-              <span style={{ fontSize: '0.625rem', fontWeight: 700, opacity: 0.8, color: '#4b5563', display: 'block' }}>
-                {t('layout.db_status')}
-              </span>
-              <span style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-                <span style={{ width: '0.5rem', height: '0.5rem', background: '#166534', borderRadius: '50%', display: 'inline-block' }} />
-                {t('layout.db_stable')}
-              </span>
-            </div>
           </aside>
 
           {/* ── Main ── */}
@@ -213,7 +204,6 @@ export default function Layout({ children }: { children: ReactNode }) {
 
         {/* ── Footer ── */}
         <footer style={styles.footer}>
-          <div>{t('layout.footer_stack')}</div>
           <div>{t('layout.footer_copy')}</div>
         </footer>
       </div>
