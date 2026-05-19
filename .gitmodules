@@ -1,0 +1,3 @@
+[submodule "budget-app-extension"]
+	path = budget-app-extension
+	url = https://github.com/pahinets/budget-app-extension.git
