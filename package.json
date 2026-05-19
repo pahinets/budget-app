@@ -1,0 +1,52 @@
+{
+  "name": "personal-budget",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "tsx server.ts",
+    "dev:client": "esbuild src/main.tsx --bundle --outfile=public/bundle.js --loader:.tsx=tsx --loader:.ts=ts --define:process.env.NODE_ENV=\\\"development\\\" --sourcemap --watch",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "esbuild src/main.tsx --bundle --outfile=public/bundle.js --loader:.tsx=tsx --loader:.ts=ts --define:process.env.NODE_ENV=\\\"production\\\" --minify",
+    "build:server": "esbuild server.ts --platform=node --target=node18 --bundle --outfile=dist/server.cjs --external:@prisma/client --external:bcrypt --external:fsevents",
+    "start": "node dist/server.cjs",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "lint": "tsc --noEmit",
+    "prisma:deploy": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@google/genai": "^1.29.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@prisma/config": "^7.8.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "date-fns": "^4.2.1",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "pg": "^8.21.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "react-router-dom": "^7.15.1",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.14.0",
+    "@types/pg": "^8.20.0",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.25.0",
+    "prisma": "^7.8.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2"
+  }
+}

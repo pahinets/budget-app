@@ -1,0 +1,65 @@
+// prisma/schema.prisma  (Prisma 7)
+// datasource ЗАЛИШАЄТЬСЯ тут, але url береться з prisma.config.ts через env()
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
+  passwordHash    String        @map("password_hash")
+  currency        String        @default("UAH")
+  financialPeriod String        @default("month") @map("financial_period")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  categories   Category[]
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Category {
+  id        Int          @id @default(autoincrement())
+  userId    Int          @map("user_id")
+  name      String
+  type      CategoryType
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([userId, name, type])
+  @@map("categories")
+}
+
+model Transaction {
+  id          Int             @id @default(autoincrement())
+  userId      Int             @map("user_id")
+  categoryId  Int?            @map("category_id")
+  amount      Decimal         @db.Decimal(12, 2)
+  type        TransactionType
+  date        DateTime        @db.Date
+  description String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("transactions")
+}
+
+enum CategoryType {
+  income
+  expense
+}
+
+enum TransactionType {
+  income
+  expense
+}
