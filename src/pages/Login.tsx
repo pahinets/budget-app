@@ -1,3 +1,4 @@
+// src/pages/Login.tsx
 import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -66,14 +67,18 @@ export default function Login() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.9, color: '#374151', marginBottom: '0.5rem' }}>{t('auth.passphrase')}</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} style={inp} placeholder={t('auth.passphrase_placeholder')} />
-            
-            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-              <Link to="/forgot-password" style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '0.75rem', opacity: 0.7, color: 'var(--ink)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
-                Забули пароль?
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.9, color: '#374151' }}>{t('auth.passphrase')}</label>
+              <Link
+                to="/forgot-password"
+                style={{ fontSize: '0.5625rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.5, borderBottom: '1px solid rgba(26,26,26,0.3)', paddingBottom: '1px' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '0.5')}
+              >
+                {t('auth.forgot_link')}
               </Link>
             </div>
+            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} style={inp} placeholder={t('auth.passphrase_placeholder')} />
           </div>
 
           <button type="submit" disabled={loading} style={{ padding: '1rem', background: 'var(--ink)', color: 'white', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: loading ? 0.5 : 1 }}>

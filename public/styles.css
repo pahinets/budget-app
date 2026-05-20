@@ -1,4 +1,4 @@
-/* public/styles.css — базові стилі без Tailwind CLI */
+/* public/styles.css */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -13,6 +13,7 @@
   --border: #1A1A1A;
   --font-sans:  "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --mobile-nav-height: 60px;
 }
 
 html { font-size: 16px; }
@@ -24,14 +25,83 @@ body {
   min-height: 100vh;
 }
 
-/* ── Utility resets ── */
 button, input, select, textarea {
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
 a { color: inherit; text-decoration: none; }
 
-/* ── Scrollbar ── */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(26,26,26,0.2); border-radius: 3px; }
+
+.mobile-bottom-nav { display: none; }
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid rgba(26,26,26,0.15);
+    z-index: 100;
+    height: var(--mobile-nav-height);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    gap: 4px;
+    color: var(--ink);
+    transition: opacity 0.15s;
+    padding: 8px 4px;
+    position: relative;
+  }
+  .mobile-bottom-nav a.active { opacity: 1; }
+  .mobile-bottom-nav a.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--ink);
+  }
+  .mobile-bottom-nav a svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
+  }
+}
+
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 80;
+}
+.drawer-overlay.open { display: block; }
