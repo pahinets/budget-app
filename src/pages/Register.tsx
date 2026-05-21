@@ -68,6 +68,7 @@ export default function Register() {
         maxWidth: '28rem', width: '100%', background: 'white',
         border: '1px solid var(--border)',
         padding: 'clamp(1.5rem, 6vw, 3rem)',
+        overflow: 'hidden',
       }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
@@ -76,8 +77,10 @@ export default function Register() {
           }}>{t('auth.ledger')}</div>
           <h2 style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: 'clamp(2rem, 8vw, 3rem)',
-            fontStyle: 'italic', letterSpacing: '-0.04em',
+            fontSize: 'clamp(1.75rem, 7vw, 3rem)',
+            fontStyle: 'italic', letterSpacing: '-0.03em',
+            wordBreak: 'break-word',
+            lineHeight: 1.1,
           }}>{t('auth.register_title')}</h2>
         </div>
 

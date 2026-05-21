@@ -70,13 +70,16 @@ export default function Analytics() {
           fontStyle: 'italic', letterSpacing: '-0.04em',
         }}>{t('analytics.title')}</h1>
         <select value={period} onChange={e => setPeriod(e.target.value)} style={{
-          padding: '0.5rem 0',
+          padding: '0.5rem 0.25rem 0.5rem 0',
           borderTop: 'none', borderLeft: 'none', borderRight: 'none',
           borderBottom: '1px solid rgba(26,26,26,0.3)',
           background: 'transparent', outline: 'none',
-          fontFamily: 'var(--font-serif)', fontSize: '0.9rem',
-          textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8,
+          fontFamily: 'var(--font-serif)', fontSize: '0.875rem',
+          textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8,
           minHeight: '44px',
+          minWidth: 'max-content',
+          maxWidth: '100%',
+          cursor: 'pointer',
         }}>
           <option value="month">{t('analytics.trail_month')}</option>
           <option value="quarter">{t('analytics.trail_quarter')}</option>

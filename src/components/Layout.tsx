@@ -52,10 +52,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const menuItems = [
-    { name: t('layout.nav.overview'),     path: '/',              icon: icons.overview },
-    { name: t('layout.nav.transactions'), path: '/transactions',  icon: icons.transactions },
-    { name: t('layout.nav.analytics'),    path: '/analytics',     icon: icons.analytics },
-    { name: t('layout.nav.settings'),     path: '/settings',      icon: icons.settings },
+    { name: t('layout.nav.overview'),     shortName: language === 'uk' ? 'Огляд'   : 'Overview', path: '/',             icon: icons.overview },
+    { name: t('layout.nav.transactions'), shortName: language === 'uk' ? 'Записи'  : 'Ledger',   path: '/transactions', icon: icons.transactions },
+    { name: t('layout.nav.analytics'),    shortName: language === 'uk' ? 'Аналіз'  : 'Charts',   path: '/analytics',    icon: icons.analytics },
+    { name: t('layout.nav.settings'),     shortName: language === 'uk' ? 'Опції'   : 'Settings', path: '/settings',     icon: icons.settings },
   ];
 
   const handleLogout = () => {
@@ -97,80 +97,78 @@ export default function Layout({ children }: { children: ReactNode }) {
           borderBottom: '1px solid var(--border)',
           padding: 'clamp(0.75rem, 2vw, 1.5rem)',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          gap: '1rem',
+          flexDirection: 'column',
+          gap: '0.5rem',
           background: 'white',
           position: 'relative',
         }}>
-          {/* Lang switch — desktop only */}
+          {/* Top row on mobile: lang switch + avatar + hamburger */}
           <div style={{
-            position: 'absolute',
-            top: '1rem',
-            right: 'clamp(1rem, 3vw, 1.5rem)',
             display: 'flex',
-            gap: '0.5rem',
-            fontSize: '0.625rem',
-            fontWeight: 700,
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: '0.75rem',
           }}>
-            {(['uk', 'en'] as const).map((lang, i) => (
-              <>
-                {i > 0 && <span key={`sep-${lang}`} style={{ opacity: 0.4 }}>|</span>}
-                <button key={lang}
-                  onClick={() => setLanguage(lang)}
-                  style={{
-                    opacity: language === lang ? 1 : 0.4,
-                    textDecoration: language === lang ? 'underline' : 'none',
-                    background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700,
-                    minHeight: 'unset', padding: 0,
-                  }}
-                >{lang.toUpperCase()}</button>
-              </>
-            ))}
-          </div>
-
-          {/* Title */}
-          <div style={{ marginTop: '1rem' }}>
+            {/* Lang switch */}
             <div style={{
-              fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em',
-              textTransform: 'uppercase', opacity: 0.8, marginBottom: '0.25rem', color: '#4b5563',
-            }}>{t('layout.subtitle')}</div>
-            <h1 style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(1.75rem, 5vw, 3rem)',
-              fontStyle: 'italic',
-              letterSpacing: '-0.04em',
-              lineHeight: 1,
-            }}>{t('layout.title')}</h1>
-          </div>
-
-          {/* Right side: user info + hamburger on mobile */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-            {/* User block — hidden on small mobile to save space */}
-            <div style={{ textAlign: 'right' }} className="header-user-block">
-              <span style={{
-                display: 'block', fontSize: '0.625rem',
-                fontWeight: 700, opacity: 0.8, color: '#4b5563',
-              }}>{t('layout.user_profile')}</span>
-              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem' }}>
-                {user?.email}
-              </span>
+              display: 'flex',
+              gap: '0.5rem',
+              fontSize: '0.625rem',
+              fontWeight: 700,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              alignItems: 'center',
+            }}>
+              {(['uk', 'en'] as const).map((lang, i) => (
+                <span key={lang} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {i > 0 && <span style={{ opacity: 0.4 }}>|</span>}
+                  <button
+                    onClick={() => setLanguage(lang)}
+                    style={{
+                      opacity: language === lang ? 1 : 0.4,
+                      textDecoration: language === lang ? 'underline' : 'none',
+                      background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700,
+                      minHeight: 'unset', padding: '2px 4px',
+                    }}
+                  >{lang.toUpperCase()}</button>
+                </span>
+              ))}
             </div>
+
+            {/* Avatar — always visible */}
             <div style={{
-              width: 'clamp(2rem, 6vw, 3rem)',
-              height: 'clamp(2rem, 6vw, 3rem)',
+              width: '2rem', height: '2rem',
               background: 'var(--ink)',
               borderRadius: '50%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'white',
               fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(0.75rem, 2vw, 1.25rem)',
+              fontSize: '0.75rem',
               flexShrink: 0,
             }}>{initials}</div>
 
-            {/* Hamburger — desktop hidden via inline media approach */}
+            {/* Logout button — mobile only, shown instead of hamburger */}
+            <button
+              onClick={handleLogout}
+              className="mobile-logout-btn"
+              aria-label="Вийти"
+              title={t('layout.sign_out')}
+              style={{
+                display: 'none',
+                background: 'none', border: '1px solid rgba(153,27,27,0.35)',
+                cursor: 'pointer', padding: '5px 8px',
+                minHeight: 'unset', borderRadius: '2px',
+                alignItems: 'center', gap: '5px',
+                color: 'var(--red)',
+              }}
+            >
+              {/* Exit icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+              </svg>
+            </button>
+
+            {/* Hamburger — mobile only */}
             <button
               onClick={() => setDrawerOpen(true)}
               style={{
@@ -183,6 +181,39 @@ export default function Layout({ children }: { children: ReactNode }) {
             >
               <div style={{ width: 24, height: 24 }}>{icons.menu}</div>
             </button>
+          </div>
+
+          {/* Bottom row: title + user email (desktop) */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            gap: '1rem',
+          }}>
+            <div>
+              <div style={{
+                fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em',
+                textTransform: 'uppercase', opacity: 0.8, marginBottom: '0.25rem', color: '#4b5563',
+              }}>{t('layout.subtitle')}</div>
+              <h1 style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: 'clamp(1.75rem, 5vw, 3rem)',
+                fontStyle: 'italic',
+                letterSpacing: '-0.04em',
+                lineHeight: 1,
+              }}>{t('layout.title')}</h1>
+            </div>
+
+            {/* User email — desktop only */}
+            <div style={{ textAlign: 'right', flexShrink: 0 }} className="header-user-block">
+              <span style={{
+                display: 'block', fontSize: '0.625rem',
+                fontWeight: 700, opacity: 0.8, color: '#4b5563',
+              }}>{t('layout.user_profile')}</span>
+              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem' }}>
+                {user?.email}
+              </span>
+            </div>
           </div>
         </header>
 
@@ -260,9 +291,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             borderLeft: '1px solid var(--border)',
             zIndex: 90,
             padding: '1.5rem',
+            paddingBottom: 'calc(1.5rem + 60px + env(safe-area-inset-bottom, 0px))',
             display: 'flex',
             flexDirection: 'column',
             gap: '2rem',
+            overflowY: 'auto',
             transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)',
             transition: 'transform 0.25s ease',
           }} className="mobile-drawer">
@@ -376,7 +409,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             className={location.pathname === item.path ? 'active' : ''}
           >
             {item.icon}
-            {item.name.length > 8 ? item.name.substring(0, 7) + '…' : item.name}
+            {item.shortName}
           </Link>
         ))}
       </nav>
@@ -387,6 +420,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           .desktop-sidebar { display: none !important; }
           .hamburger-btn { display: flex !important; }
           .header-user-block { display: none !important; }
+          .mobile-logout-btn { display: flex !important; }
         }
         @media (min-width: 769px) {
           .mobile-drawer { display: none !important; }
